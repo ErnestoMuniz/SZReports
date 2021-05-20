@@ -20,7 +20,6 @@ page = requests.get('https://online.sz.chat/monitoring/filter', headers=headers)
 
 #json from API response
 lista = page.json()
-print(lista)
 
 #creates time and date objects
 hoje = date.today()
@@ -68,3 +67,8 @@ mensagem = mensagem.replace('{navigating}', str(len(lista['sessions']['navigatin
 variaveis['report'] = mensagem
 with open('variables.json', 'w', encoding='utf8') as write_file:
     json.dump(variaveis, write_file)
+
+teste = page.headers['set-cookie'].split(' ')
+chaves['sz_cookies'] = teste[0] + " " + teste[10]
+with open('keys.json', 'w', encoding='utf8') as write_file:
+    json.dump(chaves, write_file)
