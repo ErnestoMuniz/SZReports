@@ -1,0 +1,7 @@
+{
+    "bot_name": "NPXReports",
+    "version": "0.1.0",
+    "functions": {
+        "sz": "report"
+    }
+}
