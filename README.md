@@ -15,6 +15,13 @@ keys.json
   "password": "yourpassword"
 }
 ```
+variables.json
+```json
+{
+  "url": "https://myexampleurl.sz.chat/",
+  "arg": "DO NOT MODIFY THIS KEY VALUE",
+  "report": "DO NOT MODIFY THIS KEY VALUE"}
+```
 
 model.txt
 ```text
