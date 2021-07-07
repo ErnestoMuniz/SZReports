@@ -14,9 +14,10 @@ except Exception as e:
 
 #request to API
 headers = {
-    'cookie': chaves['sz_cookies']
+    'cookie': chaves['sz_cookies'],
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36'
 }
-page = requests.get('https://online.sz.chat/monitoring/filter', headers=headers)
+page = requests.get(f'{variaveis["url"]}/monitoring/filter', headers=headers)
 
 #json from API response
 lista = page.json()
