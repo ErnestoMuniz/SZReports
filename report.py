@@ -12,6 +12,9 @@ except Exception as e:
         json.dump(variaveis, write_file)
         sys.exit()
 
+# Get campaign id
+camp = variaveis['campaigns'][variaveis['arg']]
+
 #request to API
 headers = {
     'cookie': chaves['sz_cookies'],
@@ -54,15 +57,29 @@ def mes(arg):
 	if arg == 12:
 		return "dezembro"
 
+# Store counts
+waiting = 0
+attendance = 0
+
+# Loop through each queue
+for client in lista['sessions']['wait']:
+	if client['campaign_id'] == camp:
+		waiting += 1
+
+for client in lista['sessions']['attendance']:
+	if client['campaign_id'] == camp:
+		attendance += 1
+
 #creates the message string
 mensagem = open('model.txt', 'r', encoding='utf8').read()
 mensagem = mensagem.replace('{day}', str(hoje.day).zfill(2))
 mensagem = mensagem.replace('{month}', str(hoje.month).zfill(2))
 mensagem = mensagem.replace('{month_name}', mes(hoje.month))
 mensagem = mensagem.replace('{time}', str(hora))
-mensagem = mensagem.replace('{waiting}', str(len(lista['sessions']['wait'])))
-mensagem = mensagem.replace('{attendance}', str(len(lista['sessions']['attendance'])))
+mensagem = mensagem.replace('{waiting}', str(waiting))
+mensagem = mensagem.replace('{attendance}', str(attendance))
 mensagem = mensagem.replace('{navigating}', str(len(lista['sessions']['navigating'])))
+mensagem = mensagem.replace('{campaign}', variaveis['arg'].capitalize())
 
 #dumps the message into the variables json
 variaveis['report'] = mensagem

@@ -20,7 +20,12 @@ variables.json
 {
   "url": "https://myexampleurl.sz.chat/",
   "arg": "DO NOT MODIFY THIS KEY VALUE",
-  "report": "DO NOT MODIFY THIS KEY VALUE"}
+  "report": "DO NOT MODIFY THIS KEY VALUE",
+  "campaigns": {
+    "campaign_name1": "CAMPAIGNIDGOESHERE",
+    "campaign_name2": "CAMPAIGNIDGOESHERE",
+  }
+}
 ```
 
 model.txt
@@ -47,6 +52,7 @@ KeyWords for model.txt
 {waiting} = Returns the amount of the waiting customers
 {attendance} = Returns the amount of the in attendance customers
 {navigating} = Returns the amount of navigating customers
+{campaign} = The name of the campaign
 ```
 
 ## Usage
@@ -56,7 +62,7 @@ You will need to run this command whenever you see the informations you need are
 
 Then you just need to send the following command to receive your report:
 ```
-/sz
+/sz campaign_name
 ```
 
 And you're done! The bot will reply with all the data you wanted.
