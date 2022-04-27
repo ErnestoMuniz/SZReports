@@ -1,7 +1,13 @@
-#import needed modules
-import requests, json, sys
+# import needed modules
+import requests
+import json
+import sys
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
-#loads variables from json files
+# loads variables from json files
 try:
     variaveis = json.load(open('variables.json', 'r'))
     chaves = json.load(open('keys.json', 'r', encoding='utf8'))
@@ -11,21 +17,28 @@ except Exception as e:
         json.dump(variaveis, write_file)
         sys.exit()
 
-#Login
-headers = {
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36',
-    'content-type': 'application/json',
-    'referer': f'{variaveis["url"]}static/signin',
-    'accept-language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-}
 
-data = "{\n\t\"query\": \"mutation {\\n  login(\\n    email: \\\"" + chaves['user'] + "\\\"\\n    password: \\\"" + chaves['password'] + "\\\"\\n    language: \\\"pt-BR\\\"\\n    recaptchaV3Token: \\\"\\\"\\n    recaptchaV2Token: \\\"\\\"\\n  ) {\\n    token\\n  }\\n}\\n\"\n}"
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
+chrome_options.headless = True
 
-response = requests.post('https://online.sz.chat/graphql', headers=headers, data=data)
+driver = webdriver.Chrome(service=Service(
+    executable_path="/home/ernesto/Github/TelegramReports/modules/SZReports/chromedriver"), options=chrome_options)
 
-res = f"sz_user_session={response.json()['data']['login']['token']}"
+driver.get('https://online.sz.chat/')
+driver.implicitly_wait(45)
+login = driver.find_element(by=By.NAME, value='email')
+login.send_keys('ernesto.muniz@online.net.br')
+password = driver.find_element(by=By.NAME, value='password')
+password.send_keys('9AZaicTk3RKrM74rH83a')
+password.submit()
+totais = driver.find_element(By.CLASS_NAME, 'qtd')
 
-#dump results and send answer
+res = f"sz_user_session={driver.get_cookie('szchat_session')['value']}"
+
+driver.quit
+
+# dump results and send answer
 with open('keys.json', 'w') as write_file:
     chaves['sz_cookies'] = res
     json.dump(chaves, write_file)
