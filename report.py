@@ -1,6 +1,10 @@
 #import needed modules
 import requests, time, json, sys
 from datetime import date
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 #loads variables from json files
 try:
@@ -15,15 +19,25 @@ except Exception as e:
 # Get campaign id
 camp = variaveis['campaigns'][variaveis['arg']]
 
-#request to API
-headers = {
-    'cookie': chaves['sz_cookies'],
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36'
-}
-page = requests.get(f'{variaveis["url"]}/monitoring/filter', headers=headers)
+chrome_options = Options()
+# chrome_options.add_experimental_option("detach", True)
+chrome_options.headless = True
+chrome_options.add_argument("--incognito")
 
-#json from API response
-lista = page.json()
+driver = webdriver.Chrome(service=Service(
+    executable_path="./chromedriver"), options=chrome_options)
+
+driver.get(variaveis['url'])
+driver.implicitly_wait(45)
+login = driver.find_element(by=By.NAME, value='email')
+login.send_keys(chaves['user'])
+password = driver.find_element(by=By.NAME, value='password')
+password.send_keys(chaves['password'])
+password.submit()
+driver.find_element(By.CLASS_NAME, 'user-image')
+driver.get(variaveis['url']+'monitoring/filter')
+lista = json.loads(driver.find_element(By.TAG_NAME, 'pre').text)
+driver.close()
 
 #creates time and date objects
 hoje = date.today()
@@ -85,8 +99,3 @@ mensagem = mensagem.replace('{campaign}', variaveis['arg'].capitalize())
 variaveis['report'] = mensagem
 with open('variables.json', 'w', encoding='utf8') as write_file:
     json.dump(variaveis, write_file)
-
-teste = page.headers['set-cookie'].split(' ')
-chaves['sz_cookies'] = teste[0] + " " + teste[10]
-with open('keys.json', 'w', encoding='utf8') as write_file:
-    json.dump(chaves, write_file)
